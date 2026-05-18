@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsTree(treeId) {
+      let tree = get(/databases/$(database)/documents/trees/$(treeId)).data;
+      return signedIn() && (tree.ownerId == request.auth.uid || request.auth.uid in tree.sharedWith);
+    }
+
+    match /users/{uid} {
+      allow read, delete: if signedIn() && request.auth.uid == uid;
+      allow create: if signedIn() && request.auth.uid == uid && request.resource.data.uid == uid;
+      allow update: if signedIn() && request.auth.uid == uid && request.resource.data.uid == uid;
+    }
+
+    match /trees/{treeId} {
+      allow read: if true;
+      allow create, update, delete: if false;
+    }
+
+    match /subscriptions/{subId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /dailyUpdates/{updateId} {
+      allow read: if ownsTree(resource.data.treeId);
+      allow write: if false;
+    }
+
+    match /deliveries/{deliveryId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /posts/{postId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if signedIn();
+      allow delete: if signedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /voiceNotes/{noteId} {
+      allow read: if ownsTree(resource.data.treeId);
+      allow create: if signedIn();
+      allow update: if signedIn();
+    }
+
+    match /carbonLogs/{logId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /referrals/{referralId} {
+      allow read: if signedIn() && (resource.data.referrerId == request.auth.uid || resource.data.referredId == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.referredId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /donations/{donationId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+  }
+}
