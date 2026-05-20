@@ -39,16 +39,3 @@ export async function adminMarkDelivery(input: { deliveryId: string; status: str
   return callable(input);
 }
 
-export async function completeUserProfile(input: { name: string; city: string; referralCode?: string }) {
-  if (!isFirebaseConfigured || !functions) return { ok: true };
-  const callable = httpsCallable<typeof input, { ok: boolean }>(functions, 'completeUserProfile');
-  const result = await callable(input);
-  return result.data;
-}
-
-export async function deleteUserAccount() {
-  if (!isFirebaseConfigured || !functions) return { ok: true };
-  const callable = httpsCallable(functions, 'deleteUserAccount');
-  const result = await callable({});
-  return result.data as { ok: boolean };
-}

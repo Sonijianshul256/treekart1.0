@@ -4,12 +4,12 @@ import { QrCode } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import { TreeCard } from '@/components/TreeCard';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { useUserTrees } from '@/hooks/useFirestore';
 
 export default function OrchardPage() {
-  const { profile } = useAuth();
-  const { data: trees = [] } = useUserTrees(profile?.uid);
+  const { user } = useAuth();
+  const { data: trees = [] } = useUserTrees(user?.id);
   const [origin, setOrigin] = useState('');
 
   useEffect(() => {

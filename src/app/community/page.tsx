@@ -4,12 +4,12 @@ import { FormEvent, useState } from 'react';
 import { ImagePlus, Send } from 'lucide-react';
 import { Button } from '@/components/Button';
 import { PostCard } from '@/components/PostCard';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { usePosts } from '@/hooks/useFirestore';
 import { createPost } from '@/services/firestore';
 
 export default function CommunityPage() {
-  const { profile } = useAuth();
+  const { user } = useAuth();
   const { data: posts = [], refetch } = usePosts();
   const [caption, setCaption] = useState('');
   const [type, setType] = useState<'harvest_share' | 'recipe' | 'challenge'>('harvest_share');
@@ -17,7 +17,7 @@ export default function CommunityPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    await createPost(profile!.uid, { caption, type }, file);
+    await createPost(user!.id, { caption, type }, file);
     setCaption('');
     setFile(undefined);
     refetch();

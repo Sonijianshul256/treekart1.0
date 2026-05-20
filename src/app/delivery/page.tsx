@@ -4,15 +4,15 @@ import { GoogleMap, LoadScript, MarkerF, PolylineF } from '@react-google-maps/ap
 import { Phone, MapPin, Truck, CheckCircle2, ChevronRight, AlertCircle, Calendar, Compass, UserCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { STATUS_STEPS, FARM_CENTER } from '@/lib/constants';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { useDeliveries, useUserTrees } from '@/hooks/useFirestore';
 import { demoDeliveries, demoTrees } from '@/lib/demoData';
 import Link from 'next/link';
 
 export default function DeliveryPage() {
-  const { profile } = useAuth();
-  const { data: fetchedDeliveries = [] } = useDeliveries(profile?.uid);
-  const { data: fetchedTrees = [] } = useUserTrees(profile?.uid);
+  const { user } = useAuth();
+  const { data: fetchedDeliveries = [] } = useDeliveries(user?.id);
+  const { data: fetchedTrees = [] } = useUserTrees(user?.id);
 
   const deliveries = fetchedDeliveries.length > 0 ? fetchedDeliveries : demoDeliveries;
   const userTrees = fetchedTrees.length > 0 ? fetchedTrees : demoTrees;

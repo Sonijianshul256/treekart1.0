@@ -1,48 +1,37 @@
 "use client";
 
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { isAuthPath, isProtectedPath } from '@/lib/routes';
 import { usePathname, useRouter } from 'next/navigation';
 import { ReactNode, Suspense, useEffect } from 'react';
 
 function AuthShellInner({ children }: { children: ReactNode }) {
-  const { loading, firebaseUser, profile } = useAuth();
+  const { isLoading, user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
   const isProtected = isProtectedPath(pathname);
   const isAuthPage = isAuthPath(pathname);
-  const isOnboarding = pathname === '/onboarding';
-  const onboardingDone = Boolean(profile?.onboardingComplete);
 
   useEffect(() => {
-    if (loading) return;
+    if (isLoading) return;
 
-    if (firebaseUser && onboardingDone && (isAuthPage || isOnboarding)) {
+    if (user && isAuthPage) {
       router.replace('/orchard');
       return;
     }
 
-    if (firebaseUser && profile && !onboardingDone && !isOnboarding && isProtected) {
-      router.replace('/onboarding');
-      return;
-    }
-
-    if (!firebaseUser && isProtected) {
+    if (!user && isProtected) {
       router.replace(`/signin?next=${encodeURIComponent(pathname)}`);
       return;
     }
+  }, [isLoading, user, pathname, router, isAuthPage, isProtected]);
 
-    if (!firebaseUser && isOnboarding) {
-      router.replace('/signin');
-    }
-  }, [loading, firebaseUser, profile, onboardingDone, pathname, router, isAuthPage, isOnboarding, isProtected]);
-
-  if (loading && (isProtected || isOnboarding || isAuthPage)) {
+  if (isLoading && (isProtected || isAuthPage)) {
     return <div className="grid min-h-[50vh] place-items-center bg-grove-50 text-grove-700">Loading Treekart…</div>;
   }
 
-  if (!loading && isProtected && (!firebaseUser || !onboardingDone)) {
+  if (!isLoading && isProtected && !user) {
     return <div className="grid min-h-[50vh] place-items-center bg-grove-50 text-grove-700">Redirecting…</div>;
   }
 

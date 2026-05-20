@@ -14,3 +14,7 @@ ui-debug.log
 
 # Next.js build output
 .next/
+
+/generated/prisma
+
+/generated/prisma

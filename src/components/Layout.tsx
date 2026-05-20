@@ -3,13 +3,12 @@
 import Link from 'next/link';
 import { Bell, Leaf, Menu, UserRound } from 'lucide-react';
 import { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { usePathname } from 'next/navigation';
 
 const nav = [
   { to: '/map', label: 'Farm Map' },
   { to: '/orchard', label: 'My Orchard' },
-  { to: '/tree/mango-g-07/ar', label: '🌳 3D & AR' },
   { to: '/carbon', label: 'Carbon' },
   { to: '/delivery', label: 'Delivery' },
   { to: '/community', label: 'Community' },
@@ -17,7 +16,7 @@ const nav = [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { profile } = useAuth();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -46,9 +45,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
             })}
           </nav>
           <div className="hidden items-center gap-2 lg:flex">
-            {profile ? (
+            {user ? (
               <Link href="/profile" className="flex items-center gap-2 rounded bg-ink px-3 py-2 text-sm font-semibold text-white">
-                <UserRound size={16} /> {profile.name || 'Profile'}
+                <UserRound size={16} /> {user.name || 'Profile'}
               </Link>
             ) : (
               <div className="flex items-center gap-2">
@@ -69,7 +68,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 {item.label}
               </Link>
             ))}
-            {profile ? (
+            {user ? (
               <Link href="/profile" onClick={() => setOpen(false)} className="mt-2 block rounded bg-ink px-3 py-2 text-sm font-semibold text-white">
                 Profile
               </Link>

@@ -3,10 +3,10 @@
 import { ArrowRight, Building2, Gift, MapPinned, Sprout, Leaf } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/Button';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function HomePage() {
-  const { profile } = useAuth();
+  const { user } = useAuth();
 
   return (
     <main>
@@ -25,7 +25,7 @@ export default function HomePage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/map"><Button><MapPinned size={18} /> Explore Farm Map</Button></Link>
-            {profile ? (
+            {user ? (
               <Link href="/orchard"><Button variant="secondary">My Orchard <ArrowRight size={18} /></Button></Link>
             ) : (
               <>

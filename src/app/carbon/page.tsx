@@ -3,14 +3,14 @@
 import { IndianRupee, Leaf, MapPin } from 'lucide-react';
 import { Button } from '@/components/Button';
 import { MetricCard } from '@/components/MetricCard';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { useUserTrees } from '@/hooks/useFirestore';
 import { CARBON_BY_TREE } from '@/lib/constants';
 import { createCheckoutSession } from '@/services/functions';
 
 export default function CarbonPage() {
-  const { profile } = useAuth();
-  const { data: trees = [] } = useUserTrees(profile?.uid);
+  const { user } = useAuth();
+  const { data: trees = [] } = useUserTrees(user?.id);
   const total = trees.reduce((sum, tree) => sum + CARBON_BY_TREE[tree.type], 0);
   const drivingKmLess = total * 0.004;
 

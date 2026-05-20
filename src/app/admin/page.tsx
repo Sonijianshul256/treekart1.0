@@ -3,12 +3,12 @@
 import { FormEvent, useState } from 'react';
 import { Upload } from 'lucide-react';
 import { Button } from '@/components/Button';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { uploadFarmerVoiceNote } from '@/services/admin';
 import { adminMarkDelivery } from '@/services/functions';
 
 export default function AdminPage() {
-  const { profile } = useAuth();
+  const { user } = useAuth();
   const [treeId, setTreeId] = useState('');
   const [voiceFile, setVoiceFile] = useState<File>();
   const [deliveryId, setDeliveryId] = useState('');
@@ -17,8 +17,8 @@ export default function AdminPage() {
 
   async function submitVoice(event: FormEvent) {
     event.preventDefault();
-    if (!voiceFile || !profile) return;
-    await uploadFarmerVoiceNote(profile.uid, treeId, voiceFile);
+    if (!voiceFile || !user) return;
+    await uploadFarmerVoiceNote(user.id, treeId, voiceFile);
     setVoiceFile(undefined);
   }
 
